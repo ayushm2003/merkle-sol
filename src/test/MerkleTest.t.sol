@@ -4,6 +4,7 @@ pragma solidity 0.8.10;
 import "ds-test/test.sol";
 import "./console.sol";
 import "../Merkle.sol";
+import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
 contract MerkleTest is DSTest {
 	Merkle merkle;
@@ -17,6 +18,7 @@ contract MerkleTest is DSTest {
 
 	bytes[] data;
 
+	
 	function testCreateMerkleEven() public {
 		delete data;
 		data.push(bytes("hello"));
@@ -40,6 +42,19 @@ contract MerkleTest is DSTest {
 		bytes32 root = merkle.create_tree(data);
 		console.logBytes32(root);
 		assertEq(root, bytes32(hex'2d8c657706f2404938dc80afbe73284de45e2b6aa5129e721f876f8fb5eb28f3'));
+	}
+
+	function testProof() public {
+		data.push("vires");
+		data.push("in");
+		merkle.create_tree(data);
+		bytes32[] memory proof = merkle.createProof("in");
+		for (uint i=0; i < proof.length; i++) {
+			console.logBytes32(proof[i]);
+		}
+		bool res = MerkleProof.verify(proof, bytes32(hex'304f3b7d63c43240dab4e027fd499a3a3abfc707fd0602f0abe3c351a74b4731'), keccak256('in'));
+		console.log(res);
+		assert(res);
 	}
 
 	/*

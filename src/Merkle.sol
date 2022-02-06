@@ -3,7 +3,9 @@ pragma solidity 0.8.10;
 
 contract Merkle {
 	bytes32[] leaves;
+	uint baseSize;
 	function create_tree(bytes[] memory data) public returns(bytes32) {
+		baseSize = data.length;
 		if (data.length == 0)
 			return 0x00;
 		else if (data.length == 1)
@@ -44,11 +46,64 @@ contract Merkle {
 		}
 	}
 
+	bytes32[] proof;
+	function createProof(bytes memory val) public returns(bytes32[] memory) {
+		bytes32 leaf = keccak256(val);
+		uint index;
+		
+		uint n = baseSize;
+		uint x;
+		assert(baseSize != 0);
+
+		if (n == 1)
+			return proof;
+
+
+		for (uint i = 0; i < baseSize; i++) {
+			if (leaf == leaves[i])
+				index = i;
+		}
+		
+		while (n != 1) {
+			if (n % 2 == 0) {
+				if (index % 2 == 0) {
+					proof.push(leaves[x + index + 1]);
+					index /= 2;
+				}
+				// if (index % 2 == 1)
+				else {
+					proof.push(leaves[index - 1]);
+					index = index / 2 + 1;
+				}
+				x += n;
+				n /= 2;
+			}
+			else {
+				if (index == n-1) {
+					proof.push(leaves[leaves.length - 3]);
+					n = 1;
+				}
+				else if (index % 2 == 0) {
+					proof.push(leaves[index + 1]);
+					index /= 2;
+				}
+				// if (index % 2 == 1)
+				else {
+					proof.push(leaves[index - 1]);
+					index = index / 2 + 1;
+				}
+				x += n;
+				n = n/2 + 1;
+			}
+		}
+		return proof;
+	}
+
 	function _efficientHash(bytes32 a, bytes32 b) public pure returns (bytes32 value) {
-        assembly {
-            mstore(0x00, a)
-            mstore(0x20, b)
-            value := keccak256(0x00, 0x40)
-        }
-    }
+		assembly {
+			mstore(0x00, a)
+			mstore(0x20, b)
+			value := keccak256(0x00, 0x40)
+		}
+	}
 }
