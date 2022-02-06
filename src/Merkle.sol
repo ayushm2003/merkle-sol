@@ -80,8 +80,7 @@ contract Merkle {
 			}
 			else {
 				if (index == n-1) {
-					proof.push(leaves[leaves.length - 3]);
-					n = 1;
+					index = index / 2 ;
 				}
 				else if (index % 2 == 0) {
 					proof.push(leaves[x + index + 1]);
