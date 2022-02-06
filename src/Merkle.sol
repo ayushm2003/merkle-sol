@@ -52,7 +52,7 @@ contract Merkle {
 		uint index;
 		
 		uint n = baseSize;
-		uint x;
+
 		assert(baseSize != 0);
 
 		if (n == 1)
@@ -63,7 +63,7 @@ contract Merkle {
 			if (leaf == leaves[i])
 				index = i;
 		}
-		
+		uint x;
 		while (n != 1) {
 			if (n % 2 == 0) {
 				if (index % 2 == 0) {
@@ -72,8 +72,11 @@ contract Merkle {
 				}
 				// if (index % 2 == 1)
 				else {
-					proof.push(leaves[index - 1]);
-					index = index / 2 + 1;
+					proof.push(leaves[x + index - 1]);
+					if (index == 1)
+						index = 0;
+					else
+						index = index / 2 + 1;
 				}
 				x += n;
 				n /= 2;
@@ -84,13 +87,16 @@ contract Merkle {
 					n = 1;
 				}
 				else if (index % 2 == 0) {
-					proof.push(leaves[index + 1]);
+					proof.push(leaves[x + index + 1]);
 					index /= 2;
 				}
 				// if (index % 2 == 1)
 				else {
-					proof.push(leaves[index - 1]);
-					index = index / 2 + 1;
+					proof.push(leaves[x + index - 1]);
+					if (index == 1)
+						index = 0;
+					else
+						index = index / 2 + 1;
 				}
 				x += n;
 				n = n/2 + 1;

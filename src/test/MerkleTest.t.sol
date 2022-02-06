@@ -32,7 +32,7 @@ contract MerkleTest is DSTest {
 		console.logBytes32(root);
 		assertEq(root, bytes32(hex'c0446242ea010423de07ec20577c70620c01f75dcb782beb97302b116e1be662'));
 	}
-
+	
 	function testCreateMerkleOdd() public {
 		delete data;
 		data.push("vires");
@@ -43,16 +43,22 @@ contract MerkleTest is DSTest {
 		console.logBytes32(root);
 		assertEq(root, bytes32(hex'2d8c657706f2404938dc80afbe73284de45e2b6aa5129e721f876f8fb5eb28f3'));
 	}
+	
 
 	function testProof() public {
 		data.push("vires");
 		data.push("in");
+		data.push("numeris");
+		data.push(bytes("hello"));
+		data.push(bytes("world"));
+		data.push(bytes("!"));
+
 		merkle.create_tree(data);
 		bytes32[] memory proof = merkle.createProof("in");
 		for (uint i=0; i < proof.length; i++) {
 			console.logBytes32(proof[i]);
 		}
-		bool res = MerkleProof.verify(proof, bytes32(hex'304f3b7d63c43240dab4e027fd499a3a3abfc707fd0602f0abe3c351a74b4731'), keccak256('in'));
+		bool res = MerkleProof.verify(proof, bytes32(hex'9836b7a95d837e8d9ab44b68fc91a3cbeb0e6ffbc860bc210c37705ba9370272'), keccak256('in'));
 		console.log(res);
 		assert(res);
 	}
