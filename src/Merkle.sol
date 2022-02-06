@@ -49,9 +49,9 @@ contract Merkle {
 	bytes32[] proof;
 	function createProof(bytes memory val) public returns(bytes32[] memory) {
 		bytes32 leaf = keccak256(val);
-		uint index;
+		uint index; // index the leaf will be in the next layer
 		
-		uint n = baseSize;
+		uint n = baseSize; // no of nodes in the layer
 
 		assert(baseSize != 0);
 
@@ -73,10 +73,7 @@ contract Merkle {
 				// if (index % 2 == 1)
 				else {
 					proof.push(leaves[x + index - 1]);
-					if (index == 1)
-						index = 0;
-					else
-						index = index / 2 + 1;
+					index = index / 2;
 				}
 				x += n;
 				n /= 2;
@@ -93,10 +90,7 @@ contract Merkle {
 				// if (index % 2 == 1)
 				else {
 					proof.push(leaves[x + index - 1]);
-					if (index == 1)
-						index = 0;
-					else
-						index = index / 2 + 1;
+					index = index / 2;
 				}
 				x += n;
 				n = n/2 + 1;
