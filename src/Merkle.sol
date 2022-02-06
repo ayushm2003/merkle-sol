@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 contract Merkle {
 	bytes32[] leaves;
 	uint baseSize;
-	function create_tree(bytes[] memory data) public returns(bytes32) {
+	function createTree(bytes[] memory data) public returns(bytes32) {
 		baseSize = data.length;
 		if (data.length == 0)
 			return 0x00;
@@ -63,14 +63,14 @@ contract Merkle {
 			if (leaf == leaves[i])
 				index = i;
 		}
-		uint x;
+		uint x; // offset
 		while (n != 1) {
 			if (n % 2 == 0) {
 				if (index % 2 == 0) {
 					proof.push(leaves[x + index + 1]);
 					index /= 2;
 				}
-				// if (index % 2 == 1)
+				// index % 2 == 1
 				else {
 					proof.push(leaves[x + index - 1]);
 					index = index / 2;
@@ -87,7 +87,7 @@ contract Merkle {
 					proof.push(leaves[x + index + 1]);
 					index /= 2;
 				}
-				// if (index % 2 == 1)
+				// index % 2 == 1
 				else {
 					proof.push(leaves[x + index - 1]);
 					index = index / 2;
